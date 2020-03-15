@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <meta charset="utf-8">
+    <style>
+        body, html{
+            width: 100%;
+            height: 100%;
+            box-sizing:border-box
+        }
+        .table{
+        }
+        .login{
+            margin:auto;
+            mix-width:100%;
+            min-height:100%;
+            position:relative;
+            background: #c8c8c8;
+        }
+
+        #log, #pass {
+            border: 0;
+            width: 80%;
+            margin-left: 10%;
+            margin-right: 10%;
+            height: 50px;
+            font-size: 17px;
+            border-radius: 10px;
+            background: rgba(106, 111, 140, 0.29);
+            padding-left: 10px;
+            padding-right: 10px;
+            text-align: left;
+            box-shadow:0 2px 2px 0 rgba(0,0,0,.24),0 2px 3px 0 rgba(0,0,0,.19);
+        }
+
+        #loggr, #passgr {
+            text-transform: uppercase;
+            padding: 10px;
+        }
+        .label{
+            margin-left: 10%;
+            color: #767676;
+        }
+
+        .cont {
+            width:100%;
+            position: relative;
+            max-width:500px;
+            margin:auto;
+            transform: translate(0, 70%)
+        }
+    </style>
+    <script type="text/javascript" src="tes.js"></script>
+</head>
+<body>
+<div class="login anim" id="signin">
+    <div class="cont">
+        <div id="loggr">
+            <label for="log" class="label">Username</label><br>
+            <input type="text" id="log"></div>
+        <div id="passgr">
+            <label for="pass" class="label">Password</label><br>
+            <input type="password" id="pass"></div>
+    </div>
+</div>
+<div class="table"></div>
+</body>
+</html>
