@@ -1,37 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="sha256.js"></script>
-    <script src="A.js"></script>
-    <script type="text/javascript" src="minAjax.js"></script>
-    <style>
-        .f{
-            transform: translate(500px, 0);
-        }
-        .р{
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-        }
-    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link href="main.css" rel="stylesheet" type="text/css">
+    <meta charset="utf-8">
+
 </head>
-<body class="p">
-<div class="">
-    <h1> Login:
-        <input type="text" id="log"></h1>
-    <h1> Password:
-        <input type="password" id="pass"></h1>
-    <button onclick="cl()">GO!</button>
+<body>
+<div class="tablediv">
+    <div class="container">
+        <div class="ggroup">
+            <div class="g" id="g1">По кабинетам</div>
+            <div class="g" id="g2">Резервации</div>
+            <div class="g" id="g3">По учителям</div>
+            <div class="g" id="g4">По времени</div>
+        </div>
+        <div class="block" id="blockid"></div>
+    </div>
+    <form class="search-container" action="//llamaswill.tumblr.com/search">
+        <input id="search-box" type="text" class="search-box" name="q"/>
+        <label for="search-box"><span class="glyphicon glyphicon-search search-icon"></span></label>
+        <input type="submit" id="search-submit"/>
+    </form>
+    <div>
+        <table id="tbl" class="table"></table>
+    </div>
 </div>
-<div class="">
-    <h1> Login:
-        <input type="text" id="log"></h1>
-    <h1> Password:
-        <input type="password" id="pass"></h1>
-    <button onclick="cl()">GO!</button>
-</div>
+<!--<div class="login anim" id="signin">-->
+<!--    <div class="cont">-->
+<!--        <div id="loggr">-->
+<!--            <label for="log" class="label">Username</label><br>-->
+<!--            <input type="text" id="log"></div>-->
+<!--        <div id="passgr">-->
+<!--            <label for="pass" class="label">Password</label><br>-->
+<!--            <input type="password" id="pass"></div>-->
+<!--        <div id="buttongr">-->
+<!--            <input type="button" id="button">-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 </body>
+<script type="text/javascript" src="main.js"></script>
 
 </html>
