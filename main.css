@@ -3,15 +3,23 @@
 body, html {
     width: 100%;
     height: 100%;
-    box-sizing: border-box
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.scroll{
+    overflow-y: scroll;
+    height: 70%;
 }
 
 .tablediv {
     z-index: 1;
     position: absolute;
+    height: 600px;
     right: 50%;
     margin-top: 10%;
     transform: translate(50%, 0);
+     background: #eeeeee;
 }
 
 .table {
@@ -29,7 +37,7 @@ body, html {
     width: 100%;
     margin: auto;
     min-height: 100%;
-    z-index: 10000000000;
+    background: #eeeeee;
 }
 .container {
     width: 100%;
@@ -50,7 +58,7 @@ body, html {
     text-align: center;
     position: absolute;
     cursor: pointer;
-    z-index: 100000;
+    z-index: 501;
 }
 
 .block {
@@ -61,7 +69,7 @@ body, html {
     background: rgba(166, 163, 165, 0.51);
     transition: transform 0.6s;
     transform: translate(0, 0);
-    z-index: 0;
+    z-index: 500;
 }
 
 #log, #pass {
@@ -171,4 +179,32 @@ tr{
 tr:hover{
     background-color: #767676;
 }
+#menu{
+    position: absolute;
+    width: 300px;
+    height: 100%;
+    background: #daded8;
+    transform: translate(-250px, 0);
+    z-index: 10000000000;
+}
+.item{
+    text-align: left;
+    height: 60px;
+    font-size: 20px;
+    padding-top: 15px;
+    padding-left: 20px;
+    display: block;
+    cursor: pointer;
+}
+#header{
+    height: 100px;
 
+}
+.button_for_login_in_the_header{
+    font-size: 30px;
+    width: 50%;
+    border: 0;
+    right: 50%;
+    transform: translate(50%, 100%);
+    text-align: center;
+}

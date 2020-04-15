@@ -7,7 +7,16 @@
 
 </head>
 <body>
-<div class="tablediv">
+<div id="menu">
+    <div>
+        <div id="header">
+        </div>
+    </div>
+    <div class="item">Главная</div>
+    <div class="item">Мои резервации</div>
+    <div class="item">Создать новую</div>
+</div>
+<div class="tablediv" id='tableid'>
     <div class="container">
         <div class="ggroup">
             <div class="g" id="g1">По кабинетам</div>
@@ -17,29 +26,29 @@
         </div>
         <div class="block" id="blockid"></div>
     </div>
-    <form class="search-container" action="//llamaswill.tumblr.com/search">
+    <form class="search-container" action="">
         <input id="search-box" type="text" class="search-box" name="q"/>
         <label for="search-box"><span class="glyphicon glyphicon-search search-icon"></span></label>
         <input type="submit" id="search-submit"/>
     </form>
-    <div>
+    <div class="scroll">
         <table id="tbl" class="table"></table>
     </div>
 </div>
-<!--<div class="login anim" id="signin">-->
-<!--    <div class="cont">-->
-<!--        <div id="loggr">-->
-<!--            <label for="log" class="label">Username</label><br>-->
-<!--            <input type="text" id="log"></div>-->
-<!--        <div id="passgr">-->
-<!--            <label for="pass" class="label">Password</label><br>-->
-<!--            <input type="password" id="pass"></div>-->
-<!--        <div id="buttongr">-->
-<!--            <input type="button" id="button">-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
+<div class="login anim" id="signin">
+    <div class="cont">
+        <div id="loggr">
+            <label for="log" class="label">Username</label><br>
+            <input type="text" id="log"></div>
+        <div id="passgr">
+            <label for="pass" class="label">Password</label><br>
+            <input type="password" id="pass"></div>
+        <div id="buttongr">
+            <input type="button" id="button" onclick="login()">
+        </div>
+    </div>
+</div>
 </body>
 <script type="text/javascript" src="main.js"></script>
-
+<script type="text/javascript" src="sha256.js"></script>
 </html>
