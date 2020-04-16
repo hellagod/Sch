@@ -1,7 +1,8 @@
-
+let teachers;
+let me;
 ChooseTableType();
 CreateTableFirstType(0, 10000000000000);
-Header();
+Header(true);
 init();
 ChooseMenuItem();
 function init() {
@@ -27,6 +28,17 @@ function mousemove(event) {
         menu.style.transition ='0.6s';
     }
 }
+function function2(){
+    let search = document.getElementById('search-submit');
+    search.onmousedown = function () {
+        console.log('ggggg');
+        document.addEventListener('keyup', (e) => {
+            if(e.code === 'Enter'){
+                console.log('ffff');
+            }
+        });
+    }
+}
 function ChooseMenuItem(){
     let array = document.getElementsByClassName('item');
     let last = 0;
@@ -39,7 +51,7 @@ function ChooseMenuItem(){
 
         };
         array[i].onmouseout = function () {
-            y.style.background = "rgba(187,195,190,0.29)";
+            y.style.background = "rgba(218,222,216,0.29)";
             y.style.transition = '0.6s';
             y.style.paddingLeft = '20px';
         };
@@ -54,21 +66,61 @@ function ChooseMenuItem(){
         }
     }
 }
-function Header() {
-    if(true){
+function Header(bool) {
+    if(bool){
         let header = document.getElementById('header');
         let button = document.createElement('input');
         button.type = 'button';
         button.value = 'войти';
-        button.onclick = function(){
+        button.style.height = '40px';
+        button.style.width = '100px';
+        button.className = 'button_for_login_in_the_header';
+        let x = (header.clientWidth - 100)/2;
+        let y = (header.clientHeight - 40)/2;
+        button.style.transform = `translate(${x}px, ${y}px)`;
+        button.onmousedown = function(){
+            button.style.boxShadow = '0 0 0 3px #eeeeee';
+            button.style.color = 'white';
+            button.style.transition = '0s';
             let tbg = document.getElementById('tableid');
             let signin = document.getElementById('signin');
             tbg.style.zIndex = '0';
             signin.style.zIndex = '1000000';
-        }
+        };
+        button.onmouseup = function(){
+            button.style.background = "rgba(101,108,103,0.29)";
+            button.style.boxShadow = '0 0 0 3px #3d4752';
+            button.style.color = 'black';
+            button.style.transition = '0s'
+        };
+        button.onmouseover = function(){
+            button.style.background = "rgba(101,108,103,0.29)";
+            button.style.boxShadow = '0 0 0 3px #3d4752';
+            button.style.transition = '0.6s'
+        };
+        button.onmouseout = function(){
+            button.style.background = "rgba(187,195,190,0.29)";
+            button.style.boxShadow = '0 0 0 0px #3d4752';
+            button.style.transition = '0.6s'
+        };
         button.appendChild(document.createTextNode('Войти'));
-        button.className = 'button_for_login_in_the_header';
         header.appendChild(button);
+    }
+    else{
+        let header = document.getElementById('header');
+        if(header.children[0].className === 'button_for_login_in_the_header'){
+            header.removeChild(header.children[0]);
+            let name = document.createElement('div');
+            let exit = document.createElement("div");
+            exit.style.margin = '10px';
+            name.appendChild(document.createTextNode(me.fio));
+            name.style.fontSize = '25px';
+            name.style.textAlign = 'center';
+            exit.appendChild(document.createTextNode('Выход'));
+            header.appendChild(exit);
+            header.appendChild(name );
+        }
+
     }
 }
 function ChooseTableType() {
@@ -83,7 +135,6 @@ function ChooseTableType() {
     for (let i = 0; i < array.length; i++) {
         array[i].style.transform = `translate(${i * 100}%, 0)`;
         let j = array[i].getBoundingClientRect().x - block.getBoundingClientRect().x;
-        console.log(j);
         array[i].onmouseover = function () {
             block.style.transform = `translate(${j}px, 0)`;
             block.style.background = "rgba(101,108,103,0.29)";
@@ -110,9 +161,14 @@ function login() {
     let con = new XMLHttpRequest();
     if (login && pass) {
         con.open('GET', `http://shproj2020.herokuapp.com/login?username=${login}&password=${sha256(pass)}`, false);
+        con.withCredentials = true;
         con.send();
+        con = new XMLHttpRequest();
         con.open('GET', `http://shproj2020.herokuapp.com/get_prs_id`, false);
+        con.withCredentials = true;
         con.send();
+        me = teachers[con.response];
+        Header(false);
     }
 }
 
@@ -130,7 +186,6 @@ function getTeachers() {
     let con = new XMLHttpRequest();
     con.open('GET', `http://shproj2020.herokuapp.com/get_teacher_list`, false);
     con.send();
-    console.log(con.response);
     let response1 = JSON.parse(con.response);
     let teachers = [];
     console.log("teachers: " + response1.length);
@@ -167,24 +222,21 @@ class Teacher {
 function CreateTableFirstType(start, end) {
     let reservations = getReservations(start, end);
     console.log("reservations: " + reservations.length);
-    let teachers = getTeachers();
+    teachers = getTeachers();
     let tbl = document.getElementsByClassName("table");
-
-    let date = new Date();
-
-
     let tbdy = document.createElement('tbody');
     for (let i = -1; i < reservations.length; i++) {
         let tr = document.createElement('tr');
+        tr.style.border = '0';
         let array;
         if (i === -1) {
             array = ["кабинет", "учитель", "причина"];
         } else {
             array = [reservations[i].classNumber, teachers[reservations[i].teacherId].fio, reservations[i].reason];
         }
-        console.log(array);
         for (let j = 0; j < array.length; j++) {
             let td = document.createElement('td');
+            td.style.border = '0';
             let text = document.createTextNode(array[j]);
             td.appendChild(text);
             tr.appendChild(td)
@@ -195,5 +247,28 @@ function CreateTableFirstType(start, end) {
 }
 
 function f() {
-
+    let button = document.getElementById('button');
+    button.onmousedown = function(){
+        button.style.boxShadow = '0 0 0 3px #eeeeee';
+        button.style.color = 'white';
+        button.style.transition = '0s';
+        tbg.style.zIndex = '0';
+        signin.style.zIndex = '1000000';
+    };
+    button.onmouseup = function(){
+        button.style.background = "rgba(101,108,103,0.29)";
+        button.style.boxShadow = '0 0 0 3px #3d4752';
+        button.style.color = 'black';
+        button.style.transition = '0s'
+    };
+    button.onmouseover = function(){
+        button.style.background = "rgba(101,108,103,0.29)";
+        button.style.boxShadow = '0 0 0 3px #3d4752';
+        button.style.transition = '0.6s'
+    };
+    button.onmouseout = function(){
+        button.style.background = "rgba(187,195,190,0.29)";
+        button.style.boxShadow = '0 0 0 0px #3d4752';
+        button.style.transition = '0.6s'
+    };
 }

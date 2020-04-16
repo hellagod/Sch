@@ -26,11 +26,11 @@
         </div>
         <div class="block" id="blockid"></div>
     </div>
-    <form class="search-container" action="">
-        <input id="search-box" type="text" class="search-box" name="q"/>
+    <div class="search-container">
+        <input id="search-box" type="text" class="search-box" name=""/>
         <label for="search-box"><span class="glyphicon glyphicon-search search-icon"></span></label>
-        <input type="submit" id="search-submit"/>
-    </form>
+        <input type="submit" id="search-submit" />
+    </div>
     <div class="scroll">
         <table id="tbl" class="table"></table>
     </div>
@@ -38,11 +38,11 @@
 <div class="login anim" id="signin">
     <div class="cont">
         <div id="loggr">
-            <label for="log" class="label">Username</label><br>
-            <input type="text" id="log"></div>
+            <label for="log" class="label">логин</label><br>
+            <input type="text" id="log" name="username"></div>
         <div id="passgr">
-            <label for="pass" class="label">Password</label><br>
-            <input type="password" id="pass"></div>
+            <label for="pass" class="label">пароль</label><br>
+            <input type="password" id="pass" name="password"></div>
         <div id="buttongr">
             <input type="button" id="button" onclick="login()">
         </div>
