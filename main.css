@@ -12,6 +12,8 @@ body, html {
 }
 .divtblatr{
     display: table-cell;
+    border: 0;
+
     vertical-align: middle;
     padding-top: 5px ;
     padding-left: 5px;
@@ -21,14 +23,13 @@ body, html {
     height: 40px;
 }
 .search_container{
+    display: inline-block;
     width: 350px;
-    position: absolute;
 }
 #search_date1 {
     height: 40px;
-    position: absolute;
     width: 200px;
-    transform: translate(330px, 0);
+    display: inline-block;
 }
 .table::-webkit-scrollbar {
     width: 10px;
@@ -320,7 +321,7 @@ tr:hover{
     height: 40px;
     width: 200px;
 }
-search_date2{
+#search_date2{
     display: inline-block;
     height: 40px;
     width: 200px;

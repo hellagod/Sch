@@ -637,10 +637,12 @@ function login() {
             con.withCredentials = true;
             con.send();
             me = teachers[con.response];
-            console.log('id: ' + me.id);
+            console.log('id: ' + me.teacherId);
             isinput = true;
             switchView(1);
             Header(false);
+            CreateTableFourthType();
+
         }
     } else {
         if (!pass.value) {
@@ -671,6 +673,60 @@ function getTeachers() {
         teachers[response1[i].prsId] = response1[i];
     }
     return teachers;
+}
+
+function CreateTableFourthType() {
+    let tbl = document.getElementById('table4');
+    ToKillChildren(tbl);
+    for (let i = 0; i < reservations.length; i++) {
+        if (me.prsId === reservations[i].teacherId) {
+            let div_for_tbl = document.createElement('div');
+            let start = new Date(reservations[i].startTime);
+            let end = new Date(reservations[i].endTime);
+            let div = document.createElement('div');
+            div.className = 'divtbl';
+            let time = document.createElement('input');
+            time.className = 'divtblatr';
+            let h = start.toLocaleString("ru", {
+                hour: 'numeric',
+                minute: 'numeric'
+            }) + " - " + end.toLocaleString("ru", {
+                hour: 'numeric',
+                minute: 'numeric'
+            });
+            time.value = h;
+            let classn = document.createElement('input');
+            classn.value = reservations[i].classNumber;
+            classn.className = 'divtblatr';
+            classn.readOnly = true;
+            classn.style.textAlign = 'center';
+            let reason = document.createElement('input');
+            reason.value = reservations[i].reason;
+            reason.className = 'divtblatr';
+            reason.readOnly = false;
+            time.style.width = '20%';
+            time.style.textAlign = 'center';
+            classn.style.width = '20%';
+            reason.style.width = '50%';
+            let delbutt = document.createElement('label');
+            let icondel = document.createElement('span');
+            icondel.className = 'glyphicon glyphicon-trash';
+            delbutt.appendChild(icondel);
+            let recbutt = document.createElement('label');
+            let iconrec = document.createElement('span');
+            recbutt.style.marginRight = '10px';
+            iconrec.className = 'glyphicon glyphicon-pencil';
+            recbutt.appendChild(iconrec);
+            div.appendChild(time);
+            div.appendChild(classn);
+            div.appendChild(reason);
+            div.appendChild(recbutt);
+            div.appendChild(delbutt);
+            div_for_tbl.appendChild(div);
+            tbl.appendChild(div_for_tbl);
+
+        }
+    }
 }
 
 function CreateTableThirdType() {
@@ -890,9 +946,10 @@ function CreateTableFirstType() {
 function ButtonStyle(button, y) {
     let pruv = false;
     button.style.background = "rgb(23,162,184)";
+    button.style.color = 'white';
     button.onmousedown = function () {
         button.style.boxShadow = '0 0 0 3px #eeeeee';
-        button.style.color = 'white';
+        button.style.color = 'black';
         button.style.background = "rgb(19,136,154)";
         button.style.transition = '0s';
         pruv = true;
@@ -900,7 +957,7 @@ function ButtonStyle(button, y) {
     button.onmouseup = function () {
         button.style.background = "rgb(23,162,184)";
         button.style.boxShadow = '0 0 0 3px #3d4752';
-        button.style.color = 'black';
+        button.style.color = 'white';
         button.style.transition = '0s';
         if (pruv) {
             switch (y) {
@@ -927,7 +984,7 @@ function ButtonStyle(button, y) {
     button.onmouseout = function () {
         button.style.background = "rgb(23,162,184)";
         button.style.boxShadow = '0 0 0 0px #3d4752';
-        button.style.color = 'black';
+        button.style.color = 'white';
         button.style.transition = '0.6s';
         pruv = false;
     };
