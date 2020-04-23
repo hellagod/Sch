@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    body, html {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        display: block;
+        padding: 0;
+        margin: 0;
+    }
+
+    #cont_days {
+        width: 600px;
+        font-size: 17px;
+        color: black;
+        height: 50px;
+        padding: 0;
+        margin-top: 10px;
+    }
+
+    #cont_for_rooms_containers_type {
+        width: 400px;
+        margin-bottom: 15px;
+        transform: translate(100px, 0);
+    }
+
+    #sort_by_name, #sort_by_type {
+        width: 50%;
+        text-align: center;
+        padding: 4px;
+        height: 30px;
+        position: absolute;
+        cursor: pointer;
+        z-index: 1;
+    }
+
+    #block_for_sort {
+        width: 50%;
+        height: 30px;
+        border-radius: 25px;
+        position: relative;
+        background: rgba(166, 163, 165, 0.51);
+        transition: transform 0.6s;
+        transform: translate(0, 0);
+        z-index: 0;
+    }
+
+    #cont_for_rooms {
+        width: 100%;
+        margin-top: 20px;
+        transform: translate(150px, 0);
+
+    }
+
+    .for_div {
+        display: inline-block;
+        width: 100%;
+        padding-right: 5px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    #search_date {
+        height: 40px;
+        display: inline-block;
+        width: 200px;
+    }
+
+
+    .for_div0 {
+        padding-left: 7px;
+        padding-top: 5px;
+
+        padding-right: 7px;
+        height: 30px;
+        display: inline-block;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    #room_name {
+        width: 30%;
+        height: 30px;
+        padding-right: 10px;
+        border: 0;
+        background: rgb(240, 238, 239);
+        padding-left: 10px;
+        text-align: left;
+        outline: none;
+        border-radius: 15px;
+        font-size: 20px;
+    }
+
+    .ras {
+        height: 300px;
+        overflow-x: hidden;
+        margin-top: 20px;
+    }
+
+    .dayweekpick {
+        height: 100%;
+        z-index: 3;
+        position: absolute;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Chrome/Safari/Opera */
+        -khtml-user-select: none; /* Konqueror */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none;
+    }
+
+    #week_pick_cont {
+        margin-top: 20px;
+        display: inline-block;
+        width: 300px;
+        height: 30px;
+    }
+    .choose_day{
+        margin-top: 15px;
+    }
+</style>
+<body>
+<div id="cont_days">
+    <div id="cont_for_rooms">
+        <label for="room_name">кабинет: </label>
+        <input type="text" id="room_name">
+        <div class="ras">
+            <div id='cont_for_rooms_containers_type'>
+                <div id="sort_by_name">
+                    По именам
+                </div>
+                <div id="sort_by_type">
+                    По атрибутам
+                </div>
+                <div id="block_for_sort"></div>
+            </div>
+            <div id="cont_for_rooms_names">
+            </div>
+            <div id="cont_for_rooms_types">
+            </div>
+        </div>
+        <div class="choose_day">
+<!--            <div id="week_pick_cont">-->
+<!--            </div>-->
+            <div id="search_date">
+                <div id="weekday">
+                    вс
+                </div>
+                <div id="date">
+                    19
+                </div>
+                <div id="month">
+                    апреля
+                </div>
+                <label id="calendar"><span class="glyphicon glyphicon-calendar search_icon"></span></label>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+<script>
+    CreateDatePick();
+
+    function CreateDatePick() {
+        let width = 0;
+        let searchdate = document.getElementById('search_date');
+        let weekday = document.getElementById('weekday');
+        weekday.style.transform = `translate(${width}px,0)`;
+        weekday.style.paddingLeft = '10px';
+        weekday.style.paddingRight = '10px';
+        weekday.style.fontSize = '20px';
+        width += weekday.clientWidth;
+        let date = document.getElementById('date');
+        date.style.transform = `translate(${width}px,0)`;
+        date.style.fontSize = '20px';
+        date.style.paddingLeft = '15px';
+        date.style.paddingRight = '5px';
+        width += date.clientWidth;
+        let month = document.getElementById('month');
+        month.style.transform = `translate(${width}px,0)`;
+        month.style.fontSize = '20px';
+        month.style.paddingLeft = '5px';
+        month.style.paddingRight = '35px';
+        let calendar = document.getElementById('calendar');
+        width = searchdate.clientWidth - calendar.clientWidth;
+        calendar.style.transform = `translate(${width}px,0)`;
+        calendar.style.fontSize = '20px';
+    }
+
+    function Create_Week_Picker() {
+        let weekpickcomt = document.getElementById('week_pick_cont');
+        let x = weekpickcomt.clientWidth / 7;
+        console.log(x);
+        let booleanarr = [];
+        for (let i = 0; i < 7; i++) {
+            booleanarr[i] = false;
+        }
+        let weekdays = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
+        let arr = [];
+        for (let i = 0; i < 7; i++) {
+            let canvas = document.createElement('canvas');
+            canvas.style.width = `30px`;
+            canvas.style.height = '30px';
+            canvas.style.zIndex = '0';
+            canvas.width = canvas.height;
+            canvas.className = 'dayweekpick';
+            canvas.style.transform = `translate(${i * x + (x - 30) / 2}px, 0)`;
+            weekpickcomt.appendChild(canvas);
+            arr[i] = canvas;
+        }
+        for (let i = 0; i < 7; i++) {
+            let dv = document.createElement('div');
+            dv.className = 'dayweekpick';
+            dv.style.width = `${x}px`;
+            dv.style.height = '30px';
+            dv.style.textAlign = 'center';
+            dv.style.fontSize = '20px';
+            dv.style.paddingTop = '2px';
+            dv.appendChild(document.createTextNode(weekdays[i]));
+            dv.style.transform = `translate(${i * x}px, 0)`;
+            weekpickcomt.appendChild(dv);
+            dv.onmouseover = function () {
+                if (!booleanarr[i]) {
+                    let start = Date.now(); // запомнить время начала
+                    let timer = setInterval(function () {
+                        // сколько времени прошло с начала анимации?
+                        let timePassed = Date.now() - start;
+
+                        if (timePassed >= 300) {
+                            clearInterval(timer); // закончить анимацию через 2 секунды
+                            return;
+                        }
+
+                        let ctx = arr[i].getContext("2d");
+                        ctx.fillStyle = "rgb(206,206,206)";
+                        ctx.beginPath();
+                        ctx.arc(75, 75, timePassed / 300 * 75, 0, Math.PI * 2, false);
+                        ctx.fill();
+                    }, 20);
+                }
+            };
+            dv.onmouseout = function () {
+                if (!booleanarr[i]) {
+                    let start = Date.now(); // запомнить время начала
+                    let timer = setInterval(function () {
+                        // сколько времени прошло с начала анимации?
+                        let timePassed = Date.now() - start;
+
+                        if (timePassed >= 300) {
+                            clearInterval(timer); // закончить анимацию через 2 секунды
+                            return;
+                        }
+
+                        let ctx = arr[i].getContext("2d");
+                        ctx.fillStyle = "rgb(206,206,206)";
+                        ctx.clearRect(0, 0, 150, 150);
+                        ctx.beginPath();
+                        ctx.arc(75, 75, 75 - timePassed / 300 * 75, 0, Math.PI * 2, false);
+                        ctx.fill();
+                        ctx.closePath();
+                    }, 20);
+                }
+            };
+            dv.onmousedown = function () {
+                booleanarr[i] = !booleanarr[i];
+                let ctx = arr[i].getContext("2d");
+                ctx.fillStyle = "rgb(170,170,170)";
+                ctx.clearRect(0, 0, 150, 150);
+                ctx.beginPath();
+                ctx.arc(75, 75, 75, 0, Math.PI * 2, false);
+                ctx.fill();
+                ctx.closePath();
+            };
+            dv.onmouseup = function () {
+                let ctx = arr[i].getContext("2d");
+                ctx.fillStyle = "rgb(206,206,206)";
+                ctx.clearRect(0, 0, 150, 150);
+                ctx.beginPath();
+                ctx.arc(75, 75, 75, 0, Math.PI * 2, false);
+                ctx.fill();
+                ctx.closePath();
+            };
+        }
+    }
+    let rooms_by_name = [];
+    let types = [];
+    f();
+
+    function f() {
+        rooms_by_name[0] = [11, 12, 13, 14, 15, 16, 17];
+        rooms_by_name[1] = [21, 22, 23, 24];
+        rooms_by_name[2] = [31, 32, 33, 34, 35, 36, 37, 38];
+        rooms_by_name[3] = [41, 42, 43];
+        rooms_by_name[4] = [101, 102, 103, 104, 105, 106, 107];
+        rooms_by_name[5] = [201, 202, 203, 204, 205, 207, 208, 209, 210, 211, 212, 213];
+        rooms_by_name[6] = [301, 302, 303, 304, 305, 306, 307, 308];
+        rooms_by_name[7] = ['акт. зал мл. корпуса', 'спортивый зал', 'тенисный зал', 'акт. зал ст. корпуса'];
+    }
+
+    MakeSortMenu();
+    MakContForRoomsByName();
+
+    function MakContForRoomsByName() {
+        let names = document.getElementById('cont_for_rooms_names');
+        for (let i = 0; i < rooms_by_name.length; i++) {
+            let div = document.createElement('div');
+            div.className = 'for_div';
+            for (let j = 0; j < rooms_by_name[i].length; j++) {
+                let div0 = document.createElement('div');
+                div0.className = 'for_div0';
+                if (rooms_by_name[i][j] === 208) {
+                    div0.style.background = 'rgba(166, 163, 165, 0.51)';
+                    div0.style.borderRadius = '30px';
+                }
+                div0.appendChild(document.createTextNode(rooms_by_name[i][j]));
+                div.appendChild(div0);
+            }
+            names.appendChild(div);
+        }
+    }
+
+    function MakeSortMenu() {
+        let g1 = document.getElementById('sort_by_name');
+        let g2 = document.getElementById('sort_by_type');
+        let block = document.getElementById("block_for_sort");
+        let array = [g1, g2];
+        let b = true;
+        let last = 0;
+        for (let i = 0; i < array.length; i++) {
+            array[i].style.transform = `translate(${i * 100}%, 0)`;
+            let j = array[i].getBoundingClientRect().x - block.getBoundingClientRect().x;
+            console.log(j);
+            array[i].onmouseover = function () {
+                block.style.transform = `translate(${j}px, 0)`;
+                block.style.background = "rgba(101,108,103,0.29)";
+                block.style.transition = '0.6s'
+            };
+            array[i].onmouseout = function () {
+                block.style.transform = `translate(${last}px, 0)`;
+                block.style.background = "rgba(187,195,190,0.29)";
+                block.style.transition = '0.6s';
+            };
+            array[i].onmousedown = function () {
+                last = j;
+            }
+        }
+    }
+</script>
+</html>

@@ -1,0 +1,43 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <div>
+
+    </div>
+    <button onclick="f()">ffffffff</button>
+</div>
+</body>
+<script>
+    function f() {
+        let login = 'awdrgy';
+        let pass = 'Grudinka2003';
+        let con = new XMLHttpRequest();
+        con.open('GET', `http://shproj2020.herokuapp.com/login?username=${login}&password=${sha256(pass)}`, false);
+        con.withCredentials = true;
+        con.send();
+        con = new XMLHttpRequest();
+        con.open('GET', `http://shproj2020.herokuapp.com/get_prs_id`, false);
+        con.withCredentials = true;
+        con.send();
+        let id = +con.response;
+        console.log(id);
+        let d1 = new Date(2020, 4, 1);
+        let d2 = new Date(2020, 4, 11);
+        console.log(`classNumber=123&teacherId=${id}&reason=fffff&
+                "startTime"=${d1.getTime()}&endTime=${d2.getTime()}&
+                customerId=${id}`);
+        con = new XMLHttpRequest();
+        con.open('POST', `http://shproj2020.herokuapp.com/reserve`, false);
+        con.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        con.withCredentials = true;
+        con.send(`classNumber=12&teacherId=${id}&reason=Атомная Ржомба&startTime=${d1.getTime()}&endTime=${d2.getTime()}&customerId=${id}`);
+    }
+</script>
+<script type="text/javascript" src="sha256.js"></script>
+
+</html>

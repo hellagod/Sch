@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .div_for_types {
+            border-radius: 50px;
+            text-align: center;
+            display: inline-block;
+            padding: 5px;
+            font-size: 17px;
+            padding-right: 10px;
+            padding-left: 10px;
+            margin: 2px;
+            cursor: pointer;
+        }
+
+        #types {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        #addnewclass {
+            width: 500px
+        }
+
+        #seats, #name {
+            border: none;
+            padding-left: 10px;
+            padding-right: 10px;
+            background: #ebebeb;
+            font-size: 17px;
+            border-radius: 50px;
+            display: inline-block;
+            outline: none;
+            height: 30px;
+        }
+
+        #seats {
+            width: 50px;
+        }
+
+        #name {
+            width: 150px;
+            margin-right: 15px;
+        }
+
+        .labaddroom {
+            font-size: 17px;
+        }
+
+        .buttonaddroom {
+            font-size: 20px;
+            border-radius: 20px;
+            border: 0;
+            padding: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+            outline: none;
+        }
+
+    </style>
+</head>
+<body>
+<div id="addnewclass">
+    <label for="name" class="labaddroom">Кабинет:</label>
+    <input type="text" id="name">
+    <label for="seats" class="labaddroom">Кол-во мест:</label>
+    <input type="text" id="seats">
+    <div id="types"></div>
+    <button class="buttonaddroom" id="addroomwithtypes">добавить</button>
+</div>
+<div id="addnewtype">
+    <label for="typename" class="labaddroom">Тип:</label>
+    <input type="text" id="typename">
+    <label for="classes" class="labaddroom">Кабинеты:</label>
+    <input type="text" id="classes">
+    <div id="div_for_classes"></div>
+    <button class="buttonaddroom">добавить</button>
+</div>
+
+</body>
+<script>
+    let con = new XMLHttpRequest();
+    con.open('GET', `http://shproj2020.herokuapp.com/get_rooms_list`, false);
+    con.withCredentials = true;
+    con.send();
+    console.log(JSON.parse(con.response));
+    let roomtypes =[];
+    let response1 = JSON.parse(con.response);
+    console.log("roomtypes: " + response1.length);
+    for (let i = 0; i < response1.length; i++) {
+        roomtypes[response1[i].typeId] = response1[i];
+    }
+
+    let bool_for_types = [];
+    MakContForRoomsByName(document.getElementById('div_for_classes'));
+    getRoomTypes();
+    addTypes();
+    CreateButtonForAddRoom();
+    ButtonStyle(document.getElementById('addroomwithtypes'), 3);
+
+    function CreateButtonForAddRoom() {
+        let button = document.getElementById('addroomwithtypes');
+        let cont = document.getElementById('addnewclass');
+        button.style.transform = `translate(${(cont.clientWidth - button.clientWidth) / 2}px, 0)`;
+    }
+
+    function getRoomTypes() {
+        let con = new XMLHttpRequest();
+        con.open('GET', `http://shproj2020.herokuapp.com/get_room_types_list`, false);
+        con.withCredentials = true;
+        con.send();
+        roomtypes = [];
+        let response1 = JSON.parse(con.response);
+        console.log("roomtypes: " + response1.length);
+        for (let i = 0; i < response1.length; i++) {
+            roomtypes[response1[i].typeId] = response1[i];
+        }
+    }
+
+    function addTypes() {
+        let types = document.getElementById('types');
+        for (let i = 0; i < roomtypes.length; i++) {
+            if (roomtypes[i]) {
+                let bool = false;
+                let div = document.createElement('div');
+                div.appendChild(document.createTextNode(roomtypes[i].typeDescription));
+                div.className = 'div_for_types';
+                div.onmouseover = function () {
+                    div.style.background = '#c0c0c0';
+                    div.style.transition = '0.3s';
+                };
+                div.onmouseout = function () {
+                    if (!bool) {
+                        div.style.background = 'none';
+                        div.style.transition = '0.3s';
+                    }
+                };
+                let y = false;
+                div.onmouseup = function () {
+                    if(y) {
+                        bool = !bool;
+                        bool_for_types[i] = bool;
+                        div.style.background = '#c0c0c0';
+                        div.style.transition = '0.3s';
+                    }
+                };
+                div.onmousedown = function () {
+                    div.style.background = '#747474';
+                    div.style.transition = '0s';
+                    y = true;
+                };
+
+                types.appendChild(div);
+            }
+        }
+    }
+
+    function MakContForRoomsByName(names) {
+        let div = document.createElement('div');
+        div.className = 'for_div';
+        let children = 0;
+        let last = -1;
+        let div0 = document.createElement('div');
+        for (let i = 0; i < rooms.length; i++) {
+            div0 = document.createElement('div');
+            div0.className = 'for_div0';
+            if (rooms[i]) {
+                div0.appendChild(document.createTextNode(rooms[i].classNumber));
+                if (i < 1000) {
+                    if (last === -1) {
+                        last = i;
+                        div.appendChild(div0);
+                        children++;
+                    } else {
+                        if (+i.toString()[0] - last.toString()[0] === 0 && i.toString().length === last.toString().length) {
+                            div.appendChild(div0);
+                            children++;
+                        } else {
+                            names.appendChild(div);
+                            children = 1;
+                            div = document.createElement('div');
+                            div.className = 'for_div';
+                            div.appendChild(div0);
+                        }
+                    }
+                    last = i;
+                    if (i + 1 === rooms.length) {
+                        names.appendChild(div);
+                    }
+                } else {
+                    if (children > 0) {
+                        console.log('jjjjjjjjjjjj');
+                        names.appendChild(div);
+                        children = 0;
+                        div = document.createElement('div');
+                        div.className = 'for_div';
+                    }
+                    div.appendChild(div0);
+                    if (i + 1 === rooms.length) {
+                        names.appendChild(div);
+                    }
+                }
+            }
+        }
+    }
+
+    function SendRoomToAddRoom() {
+        let s = document.getElementById('name').value;
+        let n = document.getElementById('seats').value;
+        let login = 'awdrgy';
+        let pass = 'Grudinka2003';
+        let con = new XMLHttpRequest();
+        con.open('GET', `http://shproj2020.herokuapp.com/login?username=${login}&password=${sha256(pass)}`, false);
+        con.withCredentials = true;
+        con.send();
+        con = new XMLHttpRequest();
+        con.open('GET', `http://shproj2020.herokuapp.com/get_prs_id`, false);
+        con.withCredentials = true;
+        con.send();
+        let id = +con.response;
+        con = new XMLHttpRequest();
+        con.open('POST', `http://shproj2020.herokuapp.com/add_room`, false);
+        con.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        con.withCredentials = true;
+        console.log(s);
+        console.log(n);
+        console.log(id);
+        con.send(`classNumber=${s}&seats=${n}&responsible=${id}`);
+        console.log(bool_for_types);
+        if (RequestVerification(con) === 0) {
+            for (let i = 0; i < bool_for_types.length; i++) {
+                if (bool_for_types[i]) {
+                    con = new XMLHttpRequest();
+                    con.open('POST', `http://shproj2020.herokuapp.com/add_class_type`, false);
+                    con.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    con.withCredentials = true;
+                    con.send(`classNumber=${s}&classType=${i}`);
+                }
+            }
+        }
+    }
+
+    function ButtonStyle(button, y) {
+        let pruv = false;
+        button.style.background = "rgb(23,162,184)";
+        button.onmousedown = function () {
+            button.style.boxShadow = '0 0 0 3px #eeeeee';
+            button.style.color = 'white';
+            button.style.background = "rgb(19,136,154)";
+            button.style.transition = '0s';
+            pruv = true;
+        };
+        button.onmouseup = function () {
+            button.style.background = "rgb(23,162,184)";
+            button.style.boxShadow = '0 0 0 3px #3d4752';
+            button.style.color = 'black';
+            button.style.transition = '0s';
+            if (pruv) {
+                switch (y) {
+                    case 3:
+                        SendRoomToAddRoom();
+                        break;
+                }
+            }
+        };
+        button.onmouseover = function () {
+            button.style.background = "rgb(19,136,154)";
+            button.style.boxShadow = '0 0 0 3px #3d4752';
+            button.style.transition = '0.6s'
+        };
+        button.onmouseout = function () {
+            button.style.background = "rgb(23,162,184)";
+            button.style.boxShadow = '0 0 0 0px #3d4752';
+            button.style.color = 'black';
+            button.style.transition = '0.6s';
+            pruv = false;
+        };
+    }
+
+    function RequestVerification(con) {
+        let answer = con.status;
+        if (answer === 200 || answer === 201) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+</script>
+<script type="text/javascript" src="sha256.js"></script>
+</html>

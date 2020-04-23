@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    body, html {
+    }
+
+    .dayweekpick {
+        height: 100%;
+        z-index: 3;
+        position: absolute;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none;   /* Chrome/Safari/Opera */
+        -khtml-user-select: none;    /* Konqueror */
+        -moz-user-select: none;      /* Firefox */
+        -ms-user-select: none;       /* Internet Explorer/Edge */
+        user-select: none;
+    }
+
+    #week_pick_cont {
+        width: 300px;
+        height: 30px;
+    }
+
+</style>
+<body>
+<div>
+
+    <div id="week_pick_cont">
+
+    </div>
+</div>
+</body>
+<script>
+
+
+    let weekpickcomt = document.getElementById('week_pick_cont');
+    let x = weekpickcomt.clientWidth / 7;
+    console.log(x);
+    let booleanarr = [];
+    for (let i = 0; i < 7; i++) {
+        booleanarr[i] = false;
+    }
+    let weekdays = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
+    let arr = [];
+    for (let i = 0; i < 7; i++) {
+        let canvas = document.createElement('canvas');
+        canvas.style.width = `30px`;
+        canvas.style.height = '30px';
+        canvas.style.zIndex = '0';
+        canvas.width = canvas.height;
+        canvas.className = 'dayweekpick';
+        canvas.style.transform = `translate(${i * x + (x-30)/2}px, 0)`;
+        weekpickcomt.appendChild(canvas);
+        arr[i] = canvas;
+    }
+    for (let i = 0; i < 7; i++) {
+        let dv = document.createElement('div');
+        dv.className = 'dayweekpick';
+        dv.style.width = `${x}px`;
+        dv.style.height = '30px';
+        dv.style.textAlign = 'center';
+        dv.style.fontSize = '20px';
+        dv.style.paddingTop = '2px';
+        dv.appendChild(document.createTextNode(weekdays[i]));
+        dv.style.transform = `translate(${i * x}px, 0)`;
+        weekpickcomt.appendChild(dv);
+        dv.onmouseover = function () {
+            if(!booleanarr[i]) {
+                let start = Date.now(); // запомнить время начала
+                let timer = setInterval(function () {
+                    // сколько времени прошло с начала анимации?
+                    let timePassed = Date.now() - start;
+
+                    if (timePassed >= 300) {
+                        clearInterval(timer); // закончить анимацию через 2 секунды
+                        return;
+                    }
+
+                    let ctx = arr[i].getContext("2d");
+                    ctx.fillStyle = "rgb(206,206,206)";
+                    ctx.beginPath();
+                    ctx.arc(75, 75, timePassed / 300 * 75, 0, Math.PI * 2, false);
+                    ctx.fill();
+                }, 20);
+            }
+        };
+        dv.onmouseout = function () {
+            if(!booleanarr[i]) {
+                let start = Date.now(); // запомнить время начала
+                let timer = setInterval(function () {
+                    // сколько времени прошло с начала анимации?
+                    let timePassed = Date.now() - start;
+
+                    if (timePassed >= 300) {
+                        clearInterval(timer); // закончить анимацию через 2 секунды
+                        return;
+                    }
+
+                    let ctx = arr[i].getContext("2d");
+                    ctx.fillStyle = "rgb(206,206,206)";
+                    ctx.clearRect(0, 0, 150, 150);
+                    ctx.beginPath();
+                    ctx.arc(75, 75, 75 - timePassed / 300 * 75, 0, Math.PI * 2, false);
+                    ctx.fill();
+                    ctx.closePath();
+                }, 20);
+            }
+        };
+        dv.onmousedown = function () {
+            booleanarr[i] = !booleanarr[i];
+            let ctx = arr[i].getContext("2d");
+            ctx.fillStyle = "rgb(170,170,170)";
+            ctx.clearRect(0,0,150,150);
+            ctx.beginPath();
+            ctx.arc(75, 75, 75, 0, Math.PI*2, false);
+            ctx.fill();
+            ctx.closePath();
+        };
+        dv.onmouseup = function () {
+            let ctx = arr[i].getContext("2d");
+            ctx.fillStyle = "rgb(206,206,206)";
+            ctx.clearRect(0,0,150,150);
+            ctx.beginPath();
+            ctx.arc(75, 75, 75, 0, Math.PI*2, false);
+            ctx.fill();
+            ctx.closePath();
+        };
+    }
+
+</script>
+</html>
