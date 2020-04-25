@@ -3,10 +3,11 @@
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <link href="main.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <meta charset="utf-8">
-
 </head>
 <body>
+<div class="zaslon" id="zasl"></div>
 <div id="menu">
     <div>
         <div id="header">
@@ -32,9 +33,9 @@
                 <label for="search_box"><span class="glyphicon glyphicon-search search_icon"></span></label>
             </div>
             <div id="search_date1">
-                <input type="text" id="date1" maxlength="10">
-                <label id="calendar1" for="date"><span
-                        class="glyphicon glyphicon-calendar datepicker-here"></span></label>
+                <input type="text" id="date1" maxlength="10" >
+                <label id="calendar1" for="date1"><span id="date1sp"
+                        class="glyphicon glyphicon-calendar"></span></label>
             </div>
         </div>
         <div class="whatfc">
@@ -60,18 +61,7 @@
 
 <div id="myres">
     <div class="tablediv">
-<!--        <div class="search_and_date">-->
-<!--            <div class="search_container">-->
-<!--                <input id="search_box1" type="text" autocomplete="off" class="search_box"/>-->
-<!--                <label for="search_box1"><span class="glyphicon glyphicon-search search_icon"></span></label>-->
-<!--            </div>-->
-<!--            <div id="search_date2">-->
-<!--                <input type="text" id="date2" maxlength="10">-->
-<!--                <label id="calendar2" for="date"><span-->
-<!--                        class="glyphicon glyphicon-calendar"></span></label>-->
-<!--            </div>-->
-<!--        </div>-->
-        <div class = "table" id="table4">
+        <div  id="table4">
         </div>
     </div>
 </div>
@@ -87,7 +77,7 @@
             <input type="text" id="room_name">
             <input type="text" id="date" maxlength="10">
             <label id="calendar" for="date"><span
-                    class="glyphicon glyphicon-calendar datepicker-here"></span></label>
+                    class="glyphicon glyphicon-calendar "></span></label>
             <div class="ras">
                 <div id='cont_for_rooms_containers_type'>
                     <div id="sort_by_name">
@@ -116,6 +106,35 @@
     </div>
 </div>
 </body>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+    $(function() {
+        $('#date1').daterangepicker({
+            "singleDatePicker": true,
+            "minYear": 2020,
+            startDate: moment().startOf('hour'),
+            endDate: moment().startOf('hour').add(32, 'hour'),
+        }, function(start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            reservations = getReservations(StringToDate(start.format('YYYY-MM-DD'), '00:00').getTime(), 86400000 + StringToDate(start.format('YYYY-MM-DD'), '00:00').getTime());
+            CreateTables();
+        });
+    });
+    $(function() {
+        $('#date').daterangepicker({
+            "singleDatePicker": true,
+            "minYear": 2020,
+            startDate: moment().startOf('hour'),
+            endDate: moment().startOf('hour').add(32, 'hour'),
+        }, function(start, end, label) {
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            date1inp = start.format('YYYY-MM-DD');
+        });
+
+    });
+</script>
 <script type="text/javascript" src="main.js"></script>
 <script type="text/javascript" src="sha256.js"></script>
 </html>

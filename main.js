@@ -1,4 +1,3 @@
-let teachers = getTeachers();
 let rooms;
 let roomsnotnumb = [];
 let roomssortbyabc;
@@ -9,27 +8,34 @@ let tablenow = 0;
 let x = 50;
 let value = '';
 let firsttime = false;
-let reservations = getReservations(0, 10000000000000);
 let lasttbl2x;
 let focus = false;
-
-
-getRooms();
-getRoomTypes();
+let menit = 1;
+switchView(1, 0);
+let teachers = getTeachers();
 ChooseTableType();
 CreateDatePick1();
+let d = new Date();
+let reservations = getReservations((new Date(d.getFullYear(), d.getMonth(), d.getDate())).getTime(), (new Date(d.getFullYear(), d.getMonth(), d.getDate())).getTime() + 86400000);
+getRooms();
+getRoomTypes();
 CreateSearch();
 CreateTables();
 Header(true);
 init();
 ChooseMenuItem();
-switchView(1);
 CreateDatePick();
 MakeSortMenu();
 MakContForRoomsByName(document.getElementById('cont_for_rooms_names'));
 ButtonStyle(document.getElementById('button'), 0);
 ButtonStyle(document.getElementById('button1'), 3);
 OnFocus();
+SckrivaemBagi();
+
+function SckrivaemBagi() {
+    let zsl = document.getElementById('zasl');
+    zsl.style.display = 'none';
+}
 
 function CreateTables() {
     CreateTableFirstType();
@@ -76,10 +82,10 @@ function CreateSearch() {
     };
     date1.oninput = function () {
         if ((date1.value.length === 2 || date1.value.length === 5) && lastd1 - date1.value.length <= 0) {
-            date1.value += '.';
+            date1.value += '/';
         }
         if (date1.value.length === 10) {
-            reservations = getReservations(StringToDate(date1.value, '00:00').getTime(), 86400000 + StringToDate(date1.value, '00:00').getTime());
+            reservations = getReservations(StringToDate1(date1.value, '00:00').getTime(), 86400000 + StringToDate1(date1.value, '00:00').getTime());
             CreateTables();
         }
         lastd1 = date1.value.length;
@@ -335,7 +341,7 @@ function MakContForRoomsByName(names) {
                 if (y) {
                     bool = !bool;
                     if (!bool) {
-                        search_box.value = '';
+                        //search_box.value = '';
                     } else {
                         search_box.value = rooms[i].classNumber;
                     }
@@ -496,7 +502,8 @@ function ChooseMenuItem() {
             if (g) {
                 bool = true;
                 y.style.background = "rgba(23,162,184,0.34)";
-                switchView(i + 1);
+                menit = (i === 0 ? 1 : i + 1);
+                switchView(i + 1, 6);
                 for (let j = 0; j < array.length; j++) {
                     if (j !== i) {
                         array[j].style.background = "rgb(174,210,222)";
@@ -639,7 +646,7 @@ function login() {
             me = teachers[con.response];
             console.log('id: ' + me.teacherId);
             isinput = true;
-            switchView(1);
+            switchView(menit, 6);
             Header(false);
             CreateTableFourthType();
 
@@ -655,6 +662,7 @@ function login() {
 }
 
 function getReservations(starttime, endtime) {
+    console.log(new Date(starttime));
     let con = new XMLHttpRequest();
     con.open('GET', `http://shproj2020.herokuapp.com/schedule?startTime=${starttime}&endTime=${endtime}`, false);
     con.send();
@@ -677,47 +685,203 @@ function getTeachers() {
 
 function CreateTableFourthType() {
     let tbl = document.getElementById('table4');
+    let reservations0 = getReservations(0, 10000000000000);
     ToKillChildren(tbl);
-    for (let i = 0; i < reservations.length; i++) {
-        if (me.prsId === reservations[i].teacherId) {
+    for (let i = 0; i < reservations0.length; i++) {
+        if (me.prsId === reservations0[i].teacherId) {
             let div_for_tbl = document.createElement('div');
-            let start = new Date(reservations[i].startTime);
-            let end = new Date(reservations[i].endTime);
+            let start = new Date(reservations0[i].startTime);
+            let end = new Date(reservations0[i].endTime);
             let div = document.createElement('div');
             div.className = 'divtbl';
-            let time = document.createElement('input');
-            time.className = 'divtblatr';
-            let h = start.toLocaleString("ru", {
-                hour: 'numeric',
-                minute: 'numeric'
-            }) + " - " + end.toLocaleString("ru", {
+            let date = document.createElement('input');
+            let d = new Date(start);
+            date.value = (d.getMonth() + 1 < 9 ? `0${d.getMonth() + 1}` : d.getMonth() + 1) + '/' + (d.getDate() < 9 ? `0${d.getDate()}` : d.getDate()) + '/' + d.getFullYear();
+            let tr = document.createElement('div');
+            tr.appendChild(document.createTextNode(' - '));
+            tr.className = 'divtblatr';
+            date.className = 'divtblatr';
+            date.id = `dateforref${i}`;
+            date.readOnly = true;
+            let timestart = document.createElement('input');
+            let timeend = document.createElement('input');
+            timestart.className = 'divtblatr';
+            timeend.className = 'divtblatr';
+            let hs = start.toLocaleString("ru", {
                 hour: 'numeric',
                 minute: 'numeric'
             });
-            time.value = h;
+            let he = end.toLocaleString("ru", {
+                hour: 'numeric',
+                minute: 'numeric'
+            });
+            timestart.value = hs;
+            timestart.readOnly = true;
+            timeend.readOnly = true;
+            timeend.value = he;
             let classn = document.createElement('input');
-            classn.value = reservations[i].classNumber;
+            classn.value = reservations0[i].classNumber;
             classn.className = 'divtblatr';
             classn.readOnly = true;
             classn.style.textAlign = 'center';
             let reason = document.createElement('input');
-            reason.value = reservations[i].reason;
+            reason.value = reservations0[i].reason;
             reason.className = 'divtblatr';
-            reason.readOnly = false;
-            time.style.width = '20%';
-            time.style.textAlign = 'center';
-            classn.style.width = '20%';
-            reason.style.width = '50%';
+            reason.readOnly = true;
+            date.style.width = '20%';
+            timestart.style.width = '9%';
+            timeend.style.width = '9%';
+            tr.style.width = '1%';
+            classn.style.width = '18%';
+            reason.style.width = '28%';
+            let f = false;
+
+            let delref = document.createElement('label');
+            delref.style.cursor = 'pointer';
+            delref.style.marginLeft = '10px';
+            let icondelref = document.createElement('span');
+            icondelref.style.cursor = 'pointer';
+            icondelref.style.color = 'rgb(0,0,0)';
+            icondelref.className = 'glyphicon glyphicon-remove';
+            delref.onmouseover = function () {
+                icondelref.style.color = 'rgb(184,66,71)';
+                icondelref.style.transition = '0.2s'
+            };
+            delref.onmouseout = function () {
+                icondelref.style.color = 'rgb(0,0,0)';
+                icondelref.style.transition = '0.2s'
+
+                f = false;
+            };
+            delref.onmousedown = function () {
+                icondelref.style.color = 'rgb(104,37,40)';
+                icondelref.style.transition = '0.0s'
+
+                f = true;
+            };
+            delref.onmouseup = function () {
+                if (f) {
+                    icondelref.style.color = 'rgb(184,66,71)';
+                    icondelref.style.transition = '0.0s';
+                    CreateTableFourthType();
+
+                }
+
+            };
+            delref.appendChild(icondelref);
+
             let delbutt = document.createElement('label');
+            delbutt.style.cursor = 'pointer';
             let icondel = document.createElement('span');
+            icondel.style.cursor = 'pointer';
             icondel.className = 'glyphicon glyphicon-trash';
+            delbutt.onmouseover = function () {
+                icondel.style.color = 'rgb(184,66,71)';
+                icondel.style.transition = '0.2s'
+            };
+            delbutt.onmouseout = function () {
+                icondel.style.color = 'rgb(0,0,0)';
+                icondel.style.transition = '0.2s'
+
+                f = false;
+            };
+            delbutt.onmousedown = function () {
+                icondel.style.color = 'rgb(104,37,40)';
+                icondel.style.transition = '0.0s'
+
+                f = true;
+            };
+            delbutt.onmouseup = function () {
+                if (f) {
+                    icondel.style.color = 'rgb(184,66,71)';
+                    icondel.style.transition = '0.0s';
+                    RemoveRes(reservations0[i].reservationId);
+                }
+
+            };
+            let f1 = false;
             delbutt.appendChild(icondel);
             let recbutt = document.createElement('label');
+            recbutt.style.cursor = 'pointer';
+            recbutt.style.marginLeft = '10px';
             let iconrec = document.createElement('span');
+            iconrec.style.cursor = 'pointer';
+            recbutt.onmouseover = function () {
+                iconrec.style.color = 'rgb(23,162,184)';
+                iconrec.style.transition = '0.2s'
+            };
+            let bool = false;
+            recbutt.onmouseout = function () {
+                if(!bool) {
+                    iconrec.style.color = 'rgb(0,0,0)';
+                    iconrec.style.transition = '0.2s';
+                    f1 = false;
+                }
+            };
+            recbutt.onmousedown = function () {
+                iconrec.style.color = 'rgb(12,88,100)';
+                iconrec.style.transition = '0.0s';
+
+                f1 = true;
+            };
+            let tap = 0;
+            recbutt.onmouseup = function () {
+                if (f1) {
+                    tap++;
+                    bool = !bool;
+                    iconrec.style.color = 'rgb(23,162,184)';
+                    iconrec.className = 'glyphicon glyphicon-ok';
+                    if(tap == 1) {
+                        iconrec.style.transition = '0.0s';
+                        div.style.background = 'rgba(29,225,253,0.17)';
+                        div.style.transition = '0.4s';
+                        $(function () {
+                            $(`#dateforref${i}`).daterangepicker({
+                                "singleDatePicker": true,
+                                "minYear": 2020,
+                            }, function (start, end, label) {
+                                console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+                            });
+                        });
+                        timestart.readOnly = false;
+                        timeend.readOnly = false;
+                        reason.readOnly = false;
+                        classn.readOnly = false;
+                        div.appendChild(delref);
+                    }
+                    else{
+                        tap = 0;
+                        div.style.background = 'rgba(29,225,253,0)';
+                        timestart.readOnly = true;
+                        timeend.readOnly = true;
+                        reason.readOnly = true;
+                        classn.readOnly = true;
+                        iconrec.className = 'glyphicon glyphicon-pencil';
+                        let con = new XMLHttpRequest();
+                        let date1 = document.getElementById('date1');
+                        con.open('GET', `http://shproj2020.herokuapp.com/get_prs_id`, false);
+                        con.withCredentials = true;
+                        con.send();
+                        let id = +con.response;
+                        con = new XMLHttpRequest();
+                        con.open('POST', `http://shproj2020.herokuapp.com/update_reservation`, false);
+                        con.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                        con.withCredentials = true;
+                        con.send(`reservationId=${reservations0[i].reservationId}&classNumber=${classn.value}&teacherId=${id}&reason=${reason.value}&startTime=${StringToDate1(date.value, timestart.value).getTime()}&endTime=${StringToDate1(date.value, timeend.value).getTime()}&customerId=${id}`);
+                        reservations = getReservations(StringToDate1(date.value, "00:00").getTime(), StringToDate1(date.value, "00:00").getTime() + 86400000);
+                        CreateTableFourthType();
+                        CreateTables();
+                    }
+
+                }
+            };
             recbutt.style.marginRight = '10px';
             iconrec.className = 'glyphicon glyphicon-pencil';
             recbutt.appendChild(iconrec);
-            div.appendChild(time);
+            div.appendChild(date);
+            div.appendChild(timestart);
+            div.appendChild(tr);
+            div.appendChild(timeend);
             div.appendChild(classn);
             div.appendChild(reason);
             div.appendChild(recbutt);
@@ -729,19 +893,34 @@ function CreateTableFourthType() {
     }
 }
 
+function RemoveRes(reservationId) {
+    let con = new XMLHttpRequest();
+    con.open('GET', `http://shproj2020.herokuapp.com/get_prs_id`, false);
+    con.withCredentials = true;
+    con.send();
+    con = new XMLHttpRequest();
+    con.open('GET', `http://shproj2020.herokuapp.com/delete_reservation?reservationId=${reservationId}`, false);
+    con.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    con.withCredentials = true;
+    con.send();
+    reservations = getReservations(StringToDate1(document.getElementById('date1').value, "00:00").getTime(), StringToDate1(document.getElementById('date1').value, "00:00").getTime() + 86400000);
+    CreateTableFourthType();
+    CreateTables();
+}
+
 function CreateTableThirdType() {
     let tbl = document.getElementById('tbl3');
     ToKillChildren(tbl);
     tbl.style.transition = '0s';
     switch (tablenow) {
         case 0:
-            tbl.style.transform = `translate(${2 * document.getElementById('tableid').clientWidth}px, -${document.getElementById('tbl1').clientHeight + document.getElementById('tbl2').clientHeight}px)`;
+            tbl.style.transform = `translate(${2 * document.getElementById('tableid').clientWidth}px, -${document.getElementById('tbl1').clientHeight + document.getElementById('tbl2').clientHeight + 50}px)`;
             break;
         case 1:
-            tbl.style.transform = `translate(${document.getElementById('tableid').clientWidth}px, -${document.getElementById('tbl1' + document.getElementById('tbl2').clientHeight).clientHeight}px)`;
+            tbl.style.transform = `translate(${document.getElementById('tableid').clientWidth}px, -${document.getElementById('tbl1' + document.getElementById('tbl2').clientHeight).clientHeight + 50}px)`;
             break;
         case 2:
-            tbl.style.transform = `translate(0, -${document.getElementById('tbl1').clientHeight + document.getElementById('tbl2').clientHeight}px)`;
+            tbl.style.transform = `translate(0, -${document.getElementById('tbl1').clientHeight + document.getElementById('tbl2').clientHeight + 50}px)`;
             break;
     }
     let sortreservations = reservations.sort(function (a, b) {
@@ -783,7 +962,7 @@ function CreateTableThirdType() {
                 let reason = document.createElement('div');
                 reason.appendChild(document.createTextNode(sortreservations[i].reason));
                 reason.className = 'divtblatr';
-                time.style.width = '1000px';
+                time.style.width = '20%';
                 time.style.textAlign = 'center';
                 name.style.width = '30%';
                 classn.style.width = '20%';
@@ -806,13 +985,13 @@ function CreateTableSecondType() {
     tbl.style.transition = '0s';
     switch (tablenow) {
         case 0:
-            tbl.style.transform = `translate(${document.getElementById('tableid').clientWidth}px, -${document.getElementById('tbl1').clientHeight}px)`;
+            tbl.style.transform = `translate(${document.getElementById('tableid').clientWidth}px, -${document.getElementById('tbl1').clientHeight + 25}px)`;
             break;
         case 1:
-            tbl.style.transform = `translate(0, -${document.getElementById('tbl1').clientHeight}px)`;
+            tbl.style.transform = `translate(0, -${document.getElementById('tbl1').clientHeight + 25}px)`;
             break;
         case 2:
-            tbl.style.transform = `translate(-${document.getElementById('tableid').clientWidth}px, -${document.getElementById('tbl1').clientHeight}px)`;
+            tbl.style.transform = `translate(-${document.getElementById('tableid').clientWidth}px, -${document.getElementById('tbl1').clientHeight + 25}px)`;
             break;
     }
     let teachersreservations = [];
@@ -853,7 +1032,7 @@ function CreateTableSecondType() {
                     reason.appendChild(document.createTextNode(teachersreservations[i][j].reason));
                     reason.className = 'divtblatr';
 
-                    time.style.width = '1000px';
+                    time.style.width = '20%';
                     time.style.textAlign = 'center';
                     name.style.width = '40%';
                     reason.style.width = '40%';
@@ -927,9 +1106,9 @@ function CreateTableFirstType() {
                     let reason = document.createElement('div');
                     reason.appendChild(document.createTextNode(roomsarr[i][j].reason));
                     reason.className = 'divtblatr';
-                    time.style.width = '1000px';
+                    time.style.width = '20%';
                     time.style.textAlign = 'center';
-                    name.style.width = '40%';
+                    name.style.width = '37%';
                     reason.style.width = '40%';
                     div.appendChild(time);
                     div.appendChild(name);
@@ -964,11 +1143,12 @@ function ButtonStyle(button, y) {
                 case 0:
                     break;
                 case 1:
-                    switchView(0);
+                    switchView(0, 6);
                     break;
                 case 2:
-                    switchView(0);
+                    switchView(0, 6);
                     Header(true);
+                    isinput = false;
                     break;
                 case 3:
                     NewReservation();
@@ -993,36 +1173,55 @@ function ButtonStyle(button, y) {
 function NewReservation() {
     let con = new XMLHttpRequest();
     let date1 = document.getElementById('date1');
-    con.open('GET', `http://shproj2020.herokuapp.com/get_prs_id`, false);
-    con.withCredentials = true;
-    con.send();
-    let id = +con.response;
     let room_name = document.getElementById('room_name');
     let date = document.getElementById('date');
     let start_time = document.getElementById('start_time');
     let end_time = document.getElementById('end_time');
     let reason = document.getElementById('reason');
-    let d1 = StringToDate(date.value, start_time.value);
-    let d2 = StringToDate(date.value, end_time.value);
-    console.log(`classNumber=${room_name.value}&teacherId=${id}&reason=${reason.value}&
+    let d1 = StringToDate1(date.value, start_time.value);
+    let d2 = StringToDate1(date.value, end_time.value);
+    con.open('GET', `http://shproj2020.herokuapp.com/get_prs_id`, false);
+    con.withCredentials = true;
+    con.send();
+    let id = +con.response;
+    if(!id){
+        login();
+        NewReservation();
+    }
+    else {
+        console.log(`classNumber=${room_name.value}&teacherId=${id}&reason=${reason.value}&
                 "startTime"=${d1.getTime()}&endTime=${d2.getTime()}&
                 customerId=${id}`);
-    con = new XMLHttpRequest();
-    con.open('POST', `http://shproj2020.herokuapp.com/reserve`, false);
-    con.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    con.withCredentials = true;
-    con.send(`classNumber=${room_name.value}&teacherId=${id}&reason=${reason.value}&startTime=${d1.getTime()}&endTime=${d2.getTime()}&customerId=${id}`);
-    if (date1.value) {
-        reservations = getReservations(StringToDate(date1.value, '00:00').getTime(), 86400000 + StringToDate(date1.value, '00:00').getTime());
-        CreateTables();
-    } else {
-        reservations = getReservations(0, 100000000000000);
-        CreateTables();
-    }
+        con = new XMLHttpRequest();
+        con.open('POST', `http://shproj2020.herokuapp.com/reserve`, false);
+        con.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        con.withCredentials = true;
+        con.send(`classNumber=${room_name.value}&teacherId=${id}&reason=${reason.value}&startTime=${d1.getTime()}&endTime=${d2.getTime()}&customerId=${id}`);
+        if (RequestVerification(con) === 0) {
+            document.getElementById('button1').style.background = 'rgb(102,244,134)';
+            document.getElementById('button1').style.transition = '0.6s';
+            room_name.value = '';
+            start_time.value = '';
+            end_time.value = '';
+            reason.value = '';
+        } else {
+            document.getElementById('button1').style.background = 'rgb(255,140,133)';
+            document.getElementById('button1').style.transition = '0.6s';
+        }
 
+        if (date1.value) {
+            reservations = getReservations(StringToDate1(date1.value, '00:00').getTime(), 86400000 + StringToDate1(date1.value, '00:00').getTime());
+            CreateTableFourthType();
+            CreateTables();
+        } else {
+            reservations = getReservations(0, 100000000000000);
+            CreateTables();
+            CreateTableFourthType();
+        }
+    }
 }
 
-function switchView(i) {
+function switchView(i, first) {
     let conttab = document.getElementById('conttab');
     conttab.style.zIndex = '20';
     let signin = document.getElementById('signin');
@@ -1034,44 +1233,44 @@ function switchView(i) {
     }
     switch (i) {
         case 0:
+            signin.style.transition = `0.${first}s`;
+            conttab.style.transition = `0.${first}s`;
+            myres.style.transition = `0.${first}s`;
+            cont_day.style.transition = `0.${first}s`;
             signin.style.transform = 'translate(0, 0)';
-            signin.style.transition = '0.6s';
             conttab.style.transform = `translate(0, ${y}px)`;
-            conttab.style.transition = '0.6s';
             myres.style.transform = `translate(0, ${y * 2}px)`;
-            myres.style.transition = '0.6s';
             cont_day.style.transform = `translate(0, ${y * 3}px)`;
-            cont_day.style.transition = '0.6s';
             break;
         case 1:
+            signin.style.transition = `0.${first}s`;
+            conttab.style.transition = `0.${first}s`;
+            myres.style.transition = `0.${first}s`;
+            cont_day.style.transition = `0.${first}s`;
             signin.style.transform = `translate(0, -${y}px)`;
-            signin.style.transition = '0.6s';
             conttab.style.transform = 'translate(0, 0)';
-            conttab.style.transition = '0.6s';
             myres.style.transform = `translate(0, ${y}px)`;
-            myres.style.transition = '0.6s';
             cont_day.style.transform = `translate(0, ${y * 2}px)`;
-            cont_day.style.transition = '0.6s';
             break;
         case 2:
+            signin.style.transition = `0.${first}s`;
+            conttab.style.transition = `0.${first}s`;
+            myres.style.transition = `0.${first}s`;
+            cont_day.style.transition = `0.${first}s`;
             signin.style.transform = `translate(0, -${2 * y}px)`;
-            signin.style.transition = '0.6s';
             conttab.style.transform = `translate(0, -${y}px)`;
-            conttab.style.transition = '0.6s';
             myres.style.transform = `translate(0, 0px)`;
-            myres.style.transition = '0.6s';
             cont_day.style.transform = `translate(0, ${y}px)`;
-            cont_day.style.transition = '0.6s';
             break;
         case 3:
+            signin.style.transition = `0.${first}s`;
+            conttab.style.transition = `0.${first}s`;
+            myres.style.transition = `0.${first}s`;
+            cont_day.style.transition = `0.${first}s`;
             signin.style.transform = `translate(0, -${3 * y}px)`;
-            signin.style.transition = '0.6s';
             conttab.style.transform = `translate(0, -${2 * y}px)`;
-            conttab.style.transition = '0.6s';
             myres.style.transform = `translate(0, -${y}px)`;
-            myres.style.transition = '0.6s';
             cont_day.style.transform = `translate(0, 0px)`;
-            cont_day.style.transition = '0.6s';
             break;
     }
 }
@@ -1088,8 +1287,8 @@ function switchTable(i) {
             tbl2.style.transition = '0.6s';
             tbl3.style.transition = '0.6s';
             tbl1.style.transform = 'translate(0, 0)';
-            tbl2.style.transform = `translate(${x}px, -${document.getElementById('tbl1').clientHeight}px)`;
-            tbl3.style.transform = `translate(${x * 2}px, -${document.getElementById('tbl2').clientHeight + document.getElementById('tbl1').clientHeight}px)`;
+            tbl2.style.transform = `translate(${x}px, -${document.getElementById('tbl1').clientHeight + 25}px)`;
+            tbl3.style.transform = `translate(${x * 2}px, -${document.getElementById('tbl2').clientHeight + document.getElementById('tbl1').clientHeight + 50}px)`;
             break;
         case 1:
             tbl1.style.transition = '0.6s';
@@ -1097,16 +1296,16 @@ function switchTable(i) {
             tbl3.style.transition = '0.6s';
             tbl1.style.transform = `translate(-${x}px, 0)`;
             console.log(document.getElementById('tbl1').clientHeight);
-            tbl2.style.transform = `translate(0, -${document.getElementById('tbl1').clientHeight}px)`;
-            tbl3.style.transform = `translate(${x}px, -${document.getElementById('tbl2').clientHeight + document.getElementById('tbl1').clientHeight}px)`;
+            tbl2.style.transform = `translate(0, -${document.getElementById('tbl1').clientHeight + 25}px)`;
+            tbl3.style.transform = `translate(${x}px, -${document.getElementById('tbl2').clientHeight + document.getElementById('tbl1').clientHeight + 50}px)`;
             break;
         case 2:
             tbl1.style.transition = '0.6s';
             tbl2.style.transition = '0.6s';
             tbl3.style.transition = '0.6s';
             tbl1.style.transform = `translate(-${x * 2}px, 0)`;
-            tbl2.style.transform = `translate(-${x}px, -${document.getElementById('tbl1').clientHeight}px)`;
-            tbl3.style.transform = `translate(0, -${document.getElementById('tbl2').clientHeight + document.getElementById('tbl1').clientHeight}px)`;
+            tbl2.style.transform = `translate(-${x}px, -${document.getElementById('tbl1').clientHeight + 25}px)`;
+            tbl3.style.transform = `translate(0, -${document.getElementById('tbl2').clientHeight + document.getElementById('tbl1').clientHeight + 50}px)`;
             break;
     }
 }
@@ -1119,6 +1318,12 @@ function ToKillChildren(obj) {
 
 
 function StringToDate(s, s0) {
-    let d = new Date(s.slice(6), s.slice(3, 5) - 1, s.slice(0, 2), s0.slice(0, 2), s0.slice(3, 5));
+    console.log(s.slice(0, 4) + " /1/ " + s.slice(5, 7) - 1 + " /2/ " + s.slice(8));
+    let d = new Date(s.slice(0, 4), s.slice(5, 7) - 1, s.slice(8), s0.slice(0, 2), s0.slice(3, 5));
+    return d;
+}
+function StringToDate1(s, s0) {
+    console.log(s.slice(6) + " /1/ " + s.slice(0,2) - 1 + " /2/ " + s.slice(3,5));
+    let d = new Date(s.slice(6), s.slice(0,2) - 1, s.slice(3,5), s0.slice(0, 2), s0.slice(3, 5));
     return d;
 }
